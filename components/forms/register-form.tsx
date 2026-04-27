@@ -64,35 +64,22 @@ export function RegisterForm({ user }: Props) {
 
   async function onSubmit(data: z.infer<typeof PatientFormSchema>) {
     startTransition(async () => {
-      let formData;
-
-      if (
-        data.identificationDocument &&
-        data.identificationDocument.length > 0
-      ) {
-        const blobFile = new Blob([data.identificationDocument[0]], {
-          type: data.identificationDocument[0].type,
-        });
-
-        formData = new FormData();
-        formData.append("blobFile", blobFile);
-        formData.append("fileName", data.identificationDocument[0].name);
-      }
-
       try {
+        const identificationDocument = data.identificationDocument?.[0];
+
         const patientData = {
           ...data,
           userId: user.$id,
           birthDate: new Date(data.birthDate),
-          identificationDocument: formData,
+          identificationDocument,
         };
         const patient = await registerPatient(patientData);
 
-        if (patient) {
+        if (patient.success) {
           router.push(`/patients/${user?.$id}/new-appointment`);
           toast(patient.message);
         } else {
-          toast(patient?.message || "Something went wrong");
+          toast(patient.message || "Something went wrong");
         }
       } catch (error) {
         console.log(error);
