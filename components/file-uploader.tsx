@@ -11,7 +11,7 @@ type Props = {
   onChange: (file: File[]) => void;
 };
 
-export default function FileUploader({ files, onChange }: Props) {
+export function FileUploader({ files, onChange }: Props) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     onChange(acceptedFiles);
   }, []);
@@ -27,7 +27,7 @@ export default function FileUploader({ files, onChange }: Props) {
           width={1000}
           height={1000}
           alt='uploaded_image'
-          className='max-h-[400px] overflow-hidden object-cover'
+          className='max-h-100 overflow-hidden object-cover'
         />
       ) : (
         <>
@@ -36,7 +36,7 @@ export default function FileUploader({ files, onChange }: Props) {
             width={40}
             height={40}
             alt='upload'
-            className='max-h-[400px] overflow-hidden object-cover'
+            className='max-h-100 overflow-hidden object-cover'
           />
 
           <div className='file-upload_label'>

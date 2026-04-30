@@ -1,15 +1,10 @@
 // dtos.ts
 
-import { Gender, Status, Appointment } from "./models.types";
-
-/* export type SearchParamProps = {
-  params: { [key: string]: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}; */
+import { Gender, AppointmentStatus, Appointment } from "./models.types";
 
 export type SearchParamProps = {
-  params: Record<string, string>;
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ userId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export interface CreateUserParams {
@@ -47,10 +42,11 @@ export interface CreateAppointmentParams {
   userId: string;
   patient: string;
   primaryPhysician: string;
-  reason: string;
-  schedule: Date;
-  status: Status;
-  note?: string;
+  appointmentDate: Date;
+  appointmentReason?: string;
+  additionalComments?: string;
+  cancellationReason?: string | null;
+  appointmentStatus: AppointmentStatus;
 }
 
 export interface UpdateAppointmentParams {

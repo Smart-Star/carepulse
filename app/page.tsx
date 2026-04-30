@@ -1,11 +1,18 @@
-import { PatientForm } from "@/components/forms/patient-form";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { PasskeyModal } from "@/components/passkey-modal";
+import { PatientForm } from "@/components/forms/patient-form";
 
-export default function Home() {
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function Home({ searchParams }: Props) {
+  const isAdmin = (await searchParams).admin as string;
+
   return (
     <div className='flex h-screen max-h-screen'>
-      {/* TODO: OTP Verification | PasskeyModal */}
+      {isAdmin && <PasskeyModal />}
 
       <section className='remove-scrollbar container my-auto'>
         <div className='sub-container max-w-124'>

@@ -1,6 +1,11 @@
+import {
+  userFormSchema,
+  PatientFormSchema,
+  createAppointmentFormSchema,
+} from "@/lib/schema/validation";
+
 import * as z from "zod";
 import { FormControlType, FormFieldType } from "../types/ui.types";
-import { PatientFormSchema, userFormSchema } from "@/lib/schema/validation";
 
 export const genderOptions = ["Male", "Female", "Other"];
 
@@ -168,6 +173,43 @@ export const registerFormControls: FormControlType<
     label:
       "I acknowledge that I have reviewed and agree to the privacy policy.",
     fieldType: FormFieldType.CHECKBOX,
+  },
+];
+
+export const createAppointmentFormControls: FormControlType<
+  z.infer<typeof createAppointmentFormSchema>
+>[] = [
+  {
+    name: "primaryPhysician",
+    label: "Doctor",
+    fieldType: FormFieldType.SELECT,
+    placeholder: "Select a doctor",
+  },
+  {
+    name: "appointmentDate",
+    label: "Expected appointment date",
+    fieldType: FormFieldType.DATE_PICKER,
+    placeholder: "Select your appointment date",
+    iconSrc: "/assets/icons/calendar.svg",
+    iconAlt: "calendar",
+  },
+  {
+    name: "appointmentReason",
+    label: "Reason for appointment",
+    fieldType: FormFieldType.TEXTAREA,
+    placeholder: "Enter reason for appointment",
+  },
+  {
+    name: "additionalComments",
+    label: "Additional comments/notes",
+    fieldType: FormFieldType.TEXTAREA,
+    placeholder: "Prefer afternoon appointment, if possible",
+  },
+  {
+    name: "cancellationReason",
+    label: "Reason for cancellation",
+    fieldType: FormFieldType.TEXTAREA,
+    placeholder: "Enter reason for cancellation",
   },
 ];
 

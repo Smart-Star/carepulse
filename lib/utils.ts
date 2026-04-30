@@ -1,5 +1,6 @@
-import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from "clsx";
+import { AppointmentStatus } from "@/types/models.types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -75,3 +76,27 @@ export function encryptKey(passkey: string) {
 export function decryptKey(passkey: string) {
   return atob(passkey);
 }
+
+export const getAppointmentStatus = (type: string): AppointmentStatus => {
+  switch (type) {
+    case "cancel":
+      return "Cancelled";
+    case "schedule":
+      return "Scheduled";
+    default:
+      return "Pending";
+  }
+};
+
+export const getAppointmentButtonLabel = (type: string): string => {
+  switch (type) {
+    case "cancel":
+      return "Cancel Appointment";
+    case "create":
+      return "Create Appointment";
+    case "schedule":
+      return "Schedule Appointment";
+    default:
+      return "Submit";
+  }
+};

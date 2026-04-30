@@ -68,3 +68,44 @@ export const PatientFormSchema = z.object({
     message: "You must consent to privacy in order to proceed",
   }),
 });
+
+export const createAppointmentFormSchema = z.object({
+  primaryPhysician: z.string().min(2, "Select at least one doctor"),
+  appointmentDate: z.date(),
+  appointmentReason: z
+    .string()
+    .min(2, "Reason must be at least 2 characters")
+    .max(500, "Reason must be at most 500 characters"),
+  additionalComments: z.string().optional(),
+  cancellationReason: z.string().optional(),
+});
+
+export const ScheduleAppointmentFormSchema = z.object({
+  primaryPhysician: z.string().min(2, "Select at least one doctor"),
+  appointmentDate: z.date(),
+  appointmentReason: z.string().optional(),
+  additionalComments: z.string().optional(),
+  cancellationReason: z.string().optional(),
+});
+
+export const CancelAppointmentFormSchema = z.object({
+  primaryPhysician: z.string().min(2, "Select at least one doctor"),
+  appointmentDate: z.date(),
+  appointmentReason: z.string().optional(),
+  additionalComments: z.string().optional(),
+  cancellationReason: z
+    .string()
+    .min(2, "Reason must be at least 2 characters")
+    .max(500, "Reason must be at most 500 characters"),
+});
+
+export function getAppointmentSchema(type: string) {
+  switch (type) {
+    case "create":
+      return createAppointmentFormSchema;
+    case "cancel":
+      return CancelAppointmentFormSchema;
+    default:
+      return ScheduleAppointmentFormSchema;
+  }
+}

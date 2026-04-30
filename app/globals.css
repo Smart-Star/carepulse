@@ -476,8 +476,12 @@
   @apply border-b! border-dark-400! text-light-200!;
 }
 
+@utility shad-otp {
+  @apply w-full! flex! justify-between! gap-4! has-aria-invalid:border-transparent! has-aria-invalid:ring-0!;
+}
+
 @utility shad-otp-slot {
-  @apply text-36-bold! justify-center! flex! border! border-dark-500! rounded-lg! size-16! gap-4!;
+  @apply text-36-bold! border! border-dark-500! rounded-lg! size-16!;
 }
 
 @utility shad-alert-dialog {

@@ -15,11 +15,11 @@ import { useTransition } from "react";
 import { SelectItem } from "../ui/select";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import FileUploader from "../file-uploader";
 import { User } from "@/types/inputs.types";
 import { RadioGroup } from "@base-ui/react";
 import { Field } from "@/components/ui/field";
 import { SubmitButton } from "../submit-button";
+import { FileUploader } from "../file-uploader";
 import { RadioGroupItem } from "../ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CustomFormField } from "../custom-form-field";
@@ -75,11 +75,11 @@ export function RegisterForm({ user }: Props) {
         };
         const patient = await registerPatient(patientData);
 
-        if (patient.success) {
+        if (patient?.success) {
           router.push(`/patients/${user?.$id}/new-appointment`);
-          toast(patient.message);
+          toast(patient?.message);
         } else {
-          toast(patient.message || "Something went wrong");
+          toast(patient?.message || "Something went wrong");
         }
       } catch (error) {
         console.log(error);
@@ -102,7 +102,7 @@ export function RegisterForm({ user }: Props) {
       <section className='space-y-6'>
         <h2 className='mb-9 sub-header'>Personal information</h2>
 
-        {/* Row 1: Full Name */}
+        {/* Row 1: Full name */}
         <CustomFormField {...getFormField("name")!} control={form.control} />
 
         {/* Row 2: Email & Phone */}
