@@ -11,7 +11,7 @@ import {
 
 import clsx from "clsx";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { Appointment } from "@/types/models.types";
 import { AppointmentForm } from "./forms/appointment-form";
 
@@ -32,17 +32,14 @@ export function AppointmentModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <Button
-          variant='ghost'
-          className={clsx("capitalize", {
-            "text-green-500": type === "schedule",
-            "text-red-500": type === "cancel",
-          })}>
-          {type}
-        </Button>
+      <DialogTrigger
+        className={clsx(buttonVariants({ variant: "ghost" }), "capitalize", {
+          "text-green-500": type === "schedule",
+          "text-red-500": type === "cancel",
+        })}>
+        {type}
       </DialogTrigger>
-      <DialogContent className='shad-dialog sm:max-w-xl'>
+      <DialogContent className='shad-dialog sm:max-w-lg'>
         <DialogHeader className='mb-4 space-y-3'>
           <DialogTitle className='capitalize'>{type} Appointment</DialogTitle>
           <DialogDescription>

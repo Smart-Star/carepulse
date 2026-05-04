@@ -56,7 +56,7 @@ export function AppointmentForm({
         : new Date(),
       appointmentReason: appointment?.appointmentReason || "",
       additionalComments: appointment?.additionalComments || "",
-      cancellationReason: appointment?.cancellationReason || "",
+      cancellationReason: "",
     },
   });
 

@@ -5,6 +5,7 @@ import {
   DATABASE_ID,
   APPOINTMENT_TABLE_ID,
   PATIENT_TABLE_ID,
+  messaging,
 } from "@/lib/appwrite/appwrite.config";
 
 import {
@@ -14,7 +15,7 @@ import {
 
 import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
-import { parseStringify } from "@/lib/utils";
+import { formatDateTime, parseStringify } from "@/lib/utils";
 import { Appointment } from "@/types/models.types";
 
 export const createAppointment = async (
@@ -136,6 +137,15 @@ export const updateAppointment = async (
     }
 
     // SMS notification
+    const smsMessage = `
+      Hi, it's CarePulse.
+      ${
+        updateAppointmentData?.type === "schedule"
+          ? `Your appointment has been .scheduled for ${formatDateTime(updateAppointmentData!.appointment!.appointmentDate!).dateTime} with Dr. ${updateAppointmentData.appointment.primaryPhysician}.`
+          : `We regret to inform you that your appointment has been cancelled for the following reason ${updateAppointmentData!.appointment!.cancellationReason!}. Please contact us to reschedule.`
+      }`;
+
+    await sendSMSnotification(updateAppointmentData.userId, smsMessage);
 
     revalidatePath("/admin");
     return {
@@ -149,6 +159,29 @@ export const updateAppointment = async (
     return {
       success: false,
       message: "Something went wrong! Unable to update appointment.",
+    };
+  }
+};
+
+export const sendSMSnotification = async (userId: string, content: string) => {
+  try {
+    const message = await messaging.createSMS({
+      messageId: ID.unique(),
+      content: content,
+      users: [userId],
+    });
+
+    return {
+      success: true,
+      data: parseStringify(message),
+      message: `SMS notification sent successfully.`,
+    };
+  } catch (error) {
+    console.log("Error sending SMS notification:", error);
+
+    return {
+      success: false,
+      message: "Something went wrong! Unable to send SMS notification.",
     };
   }
 };
