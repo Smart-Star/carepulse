@@ -37,9 +37,9 @@ export function RegisterForm({ user }: Props) {
   const form = useForm<z.infer<typeof PatientFormSchema>>({
     resolver: zodResolver(PatientFormSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone || "",
       birthDate: new Date(),
       gender: "Male",
       address: "",
@@ -103,12 +103,24 @@ export function RegisterForm({ user }: Props) {
         <h2 className='mb-9 sub-header'>Personal information</h2>
 
         {/* Row 1: Full name */}
-        <CustomFormField {...getFormField("name")!} control={form.control} />
+        <CustomFormField
+          {...getFormField("name")!}
+          control={form.control}
+          disabled={!!user.name}
+        />
 
         {/* Row 2: Email & Phone */}
         <div className='flex flex-col gap-6 xl:flex-row'>
-          <CustomFormField {...getFormField("email")!} control={form.control} />
-          <CustomFormField {...getFormField("phone")!} control={form.control} />
+          <CustomFormField
+            {...getFormField("email")!}
+            control={form.control}
+            disabled={!!user.email}
+          />
+          <CustomFormField
+            {...getFormField("phone")!}
+            control={form.control}
+            disabled={!!user.name}
+          />
         </div>
 
         {/* Row 3: DOB & Gender */}

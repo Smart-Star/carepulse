@@ -78,6 +78,7 @@ const RenderFormField = <T extends FieldValues>({
     children,
     renderValue,
     label,
+    disabled,
   } = formProps;
 
   switch (fieldType) {
@@ -97,9 +98,14 @@ const RenderFormField = <T extends FieldValues>({
             {...field}
             id={name}
             name={name}
+            disabled={disabled}
             aria-invalid={fieldState.invalid}
             placeholder={placeholder}
-            className={cn("shad-input border-0", iconSrc && "pl-11")}
+            className={cn(
+              "shad-input border-0",
+              iconSrc && "pl-11",
+              disabled && "disabled:opacity-100 cursor-not-allowed",
+            )}
           />
         </div>
       );
@@ -109,10 +115,11 @@ const RenderFormField = <T extends FieldValues>({
           defaultCountry='US'
           placeholder={placeholder}
           international
+          disabled={disabled}
           withCountryCallingCode
           value={field.value as E164Number | undefined}
           onChange={field.onChange}
-          className='input-phone'
+          className={`input-phone ${disabled && "cursor-not-allowed"}`}
         />
       );
     case FormFieldType.TEXTAREA:
