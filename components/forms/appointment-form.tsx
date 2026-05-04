@@ -6,6 +6,11 @@ import {
   getAppointmentStatus,
 } from "@/lib/utils";
 
+import {
+  createAppointment,
+  updateAppointment,
+} from "@/actions/appointment.actions";
+
 import * as z from "zod";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -15,19 +20,27 @@ import { SelectItem } from "../ui/select";
 import { useRouter } from "next/navigation";
 import { Field } from "@/components/ui/field";
 import { SubmitButton } from "../submit-button";
+import { Appointment } from "@/types/models.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CustomFormField } from "../custom-form-field";
 import { getAppointmentSchema } from "@/lib/schema/validation";
-import { createAppointment } from "@/actions/appointment.actions";
 import { createAppointmentFormControls, doctors } from "@/lib/constants";
 
 type Props = {
   userId: string;
   patientId: string;
+  appointment?: Appointment;
+  setOpen?: (open: boolean) => void;
   type: "create" | "cancel" | "schedule";
 };
 
-export function AppointmentForm({ type, userId, patientId }: Props) {
+export function AppointmentForm({
+  type,
+  userId,
+  patientId,
+  appointment,
+  setOpen,
+}: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -37,11 +50,13 @@ export function AppointmentForm({ type, userId, patientId }: Props) {
   const form = useForm<z.infer<typeof appointmentFormSchema>>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
-      primaryPhysician: "",
-      appointmentDate: new Date(),
-      appointmentReason: "",
-      additionalComments: "",
-      cancellationReason: "",
+      primaryPhysician: appointment ? appointment.primaryPhysician : "",
+      appointmentDate: appointment
+        ? new Date(appointment?.appointmentDate)
+        : new Date(),
+      appointmentReason: appointment?.appointmentReason || "",
+      additionalComments: appointment?.additionalComments || "",
+      cancellationReason: appointment?.cancellationReason || "",
     },
   });
 
@@ -51,7 +66,7 @@ export function AppointmentForm({ type, userId, patientId }: Props) {
 
       try {
         if (type === "create" && patientId) {
-          const appointmentData = {
+          const createAppointmentData = {
             ...data,
             userId,
             patient: patientId,
@@ -59,7 +74,7 @@ export function AppointmentForm({ type, userId, patientId }: Props) {
             appointmentStatus,
           };
 
-          const newAppointment = await createAppointment(appointmentData);
+          const newAppointment = await createAppointment(createAppointmentData);
 
           if (newAppointment?.success) {
             router.push(
@@ -69,6 +84,34 @@ export function AppointmentForm({ type, userId, patientId }: Props) {
             form.reset();
           } else {
             toast(newAppointment?.message || "Something went wrong");
+          }
+        } else {
+          if (!appointment?.$id) return;
+
+          const updateAppointmentData = {
+            userId,
+            appointmentId: appointment?.$id,
+            appointment: {
+              primaryPhysician: data?.primaryPhysician,
+              cancellationReason: data?.cancellationReason,
+              appointmentDate: new Date(data.appointmentDate),
+              appointmentStatus,
+            },
+            type,
+          };
+
+          const updatedAppointment = await updateAppointment(
+            updateAppointmentData,
+          );
+
+          console.log("updated appointment response:", updatedAppointment);
+
+          if (updatedAppointment.success) {
+            setOpen?.(false);
+            form.reset();
+            toast(updatedAppointment?.message);
+          } else {
+            toast(updatedAppointment?.message || "Something went wrong");
           }
         }
       } catch (error) {
@@ -85,12 +128,14 @@ export function AppointmentForm({ type, userId, patientId }: Props) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className='flex-1 space-y-6'>
-      <header className='mb-12 space-y-4'>
-        <h1 className='header'>Hey there 👋</h1>
-        <p className='text-dark-700'>
-          Request a new appointment in 10 secconds.
-        </p>
-      </header>
+      {type === "create" && (
+        <header className='mb-12 space-y-4'>
+          <h1 className='header'>Hey there 👋</h1>
+          <p className='text-dark-700'>
+            Request a new appointment in 10 secconds.
+          </p>
+        </header>
+      )}
 
       <section className='space-y-6'>
         {type !== "cancel" && (

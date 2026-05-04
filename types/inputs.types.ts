@@ -50,8 +50,8 @@ export interface CreateAppointmentParams {
 }
 
 export interface UpdateAppointmentParams {
-  appointmentId: string;
   userId: string;
-  appointment: Appointment;
+  appointmentId: string;
+  appointment: Partial<Appointment>;
   type: string;
 }

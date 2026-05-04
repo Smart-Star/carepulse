@@ -4,11 +4,18 @@ import {
   tablesDB,
   DATABASE_ID,
   APPOINTMENT_TABLE_ID,
+  PATIENT_TABLE_ID,
 } from "@/lib/appwrite/appwrite.config";
 
-import { ID } from "node-appwrite";
+import {
+  CreateAppointmentParams,
+  UpdateAppointmentParams,
+} from "@/types/inputs.types";
+
+import { ID, Query } from "node-appwrite";
+import { revalidatePath } from "next/cache";
 import { parseStringify } from "@/lib/utils";
-import { CreateAppointmentParams } from "@/types/inputs.types";
+import { Appointment } from "@/types/models.types";
 
 export const createAppointment = async (
   appointmentData: CreateAppointmentParams,
@@ -48,13 +55,100 @@ export const getAppointment = async (appointmentId: string) => {
       rowId: appointmentId,
     });
 
-    if (appointment) return parseStringify(appointment.$id);
+    if (appointment) return parseStringify(appointment);
   } catch (error) {
     console.log(`Error fetching appointment. ${error}`);
 
     return {
       success: false,
       message: "Something went wrong! Unable to get appointment.",
+    };
+  }
+};
+
+export const getRecentAppointmentList = async () => {
+  try {
+    const appointments = await tablesDB.listRows({
+      databaseId: DATABASE_ID!,
+      tableId: APPOINTMENT_TABLE_ID!,
+      queries: [Query.orderDesc("$createdAt")],
+    });
+
+    const patients = await tablesDB.listRows({
+      databaseId: DATABASE_ID!,
+      tableId: PATIENT_TABLE_ID!,
+    });
+
+    const patientMap = new Map(patients.rows.map((p: any) => [p.$id, p]));
+
+    // Enrich appointments with patient data (appwrite doesn't support joins, so we do it manually here)
+    const enrichedAppointments = appointments.rows.map((appointment: any) => ({
+      ...appointment,
+      patient: patientMap.get(appointment.patient) || null,
+    }));
+
+    let scheduledCount = 0;
+    let pendingCount = 0;
+    let cancelledCount = 0;
+
+    for (const appointment of enrichedAppointments as unknown as Appointment[]) {
+      if (appointment.appointmentStatus === "Pending") {
+        pendingCount++;
+      } else if (appointment.appointmentStatus === "Scheduled") {
+        scheduledCount++;
+      } else if (appointment.appointmentStatus === "Cancelled") {
+        cancelledCount++;
+      }
+    }
+
+    return parseStringify({
+      scheduledCount,
+      pendingCount,
+      cancelledCount,
+      rows: enrichedAppointments,
+      totalCount: appointments.total,
+    });
+  } catch (error) {
+    console.log("Error fetching appointment list:", error);
+
+    return {
+      success: false,
+      message: "Something went wrong! Unable to get appointment list.",
+    };
+  }
+};
+
+export const updateAppointment = async (
+  updateAppointmentData: UpdateAppointmentParams,
+) => {
+  try {
+    const updateAppointment = await tablesDB.updateRow({
+      databaseId: DATABASE_ID!,
+      tableId: APPOINTMENT_TABLE_ID!,
+      rowId: updateAppointmentData.appointmentId,
+      data: {
+        ...updateAppointmentData.appointment,
+      },
+    });
+
+    if (!updateAppointment) {
+      throw new Error("Appointment not found.");
+    }
+
+    // SMS notification
+
+    revalidatePath("/admin");
+    return {
+      success: true,
+      data: parseStringify(updateAppointment),
+      message: `Appointment updated successfully.`,
+    };
+  } catch (error) {
+    console.log("Error updating appointment:", error);
+
+    return {
+      success: false,
+      message: "Something went wrong! Unable to update appointment.",
     };
   }
 };

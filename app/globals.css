@@ -413,7 +413,7 @@
 }
 
 @utility shad-danger-btn {
-  @apply bg-red-700! text-white!;
+  @apply bg-red-700! text-white! h-11! cursor-pointer!;
 }
 
 @utility shad-gray-btn {

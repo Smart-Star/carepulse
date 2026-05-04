@@ -5,7 +5,7 @@ import {
 } from "@/lib/schema/validation";
 
 import * as z from "zod";
-import { FormControlType, FormFieldType } from "../types/ui.types";
+import { AdminStat, FormControlType, FormFieldType } from "../types/ui.types";
 
 export const genderOptions = ["Male", "Female", "Other"];
 
@@ -213,7 +213,7 @@ export const createAppointmentFormControls: FormControlType<
   },
 ];
 
-export const identificationTypes = [
+export const identificationTypes: string[] = [
   "Birth Certificate",
   "Driver's License",
   "Medical Insurance Card/Policy",
@@ -267,7 +267,28 @@ export const doctors = [
 ];
 
 export const statusIcon = {
-  scheduled: "/assets/icons/check.svg",
-  pending: "/assets/icons/pending.svg",
-  cancelled: "/assets/icons/cancelled.svg",
+  Scheduled: "/assets/icons/check.svg",
+  Pending: "/assets/icons/pending.svg",
+  Cancelled: "/assets/icons/cancelled.svg",
 };
+
+export const adminStat: AdminStat[] = [
+  {
+    type: "appointments",
+    count: 5,
+    label: "Scheduled appointments",
+    icon: "/assets/icons/appointments.svg",
+  },
+  {
+    type: "pending",
+    count: 10,
+    label: "Pending appointments",
+    icon: "/assets/icons/pending.svg",
+  },
+  {
+    type: "cancelled",
+    count: 2,
+    label: "Cancelled appointments",
+    icon: "/assets/icons/cancelled.svg",
+  },
+];

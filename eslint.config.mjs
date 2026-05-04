@@ -16,8 +16,9 @@ const eslintConfig = defineConfig([
 
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": 0,
       "react/no-unescaped-entities": 0,
+      "react-hooks/incompatible-library": 0,
+      "@typescript-eslint/no-explicit-any": 0,
       "@typescript-eslint/no-unused-vars": 1,
     },
   },

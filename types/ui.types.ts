@@ -18,3 +18,10 @@ export type FormControlType<T extends FieldValues> = {
   iconSrc?: string;
   iconAlt?: string;
 };
+
+export interface AdminStat {
+  type: "appointments" | "pending" | "cancelled";
+  count: number;
+  label: string;
+  icon: string;
+}
