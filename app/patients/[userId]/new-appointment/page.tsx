@@ -1,4 +1,5 @@
 import Image from "next/image";
+import * as Sentry from "@sentry/nextjs";
 import { getPatient } from "@/actions/patient.actions";
 import { AppointmentForm } from "@/components/forms/appointment-form";
 
@@ -9,6 +10,8 @@ type Props = {
 export default async function NewAppointment({ params }: Props) {
   const { userId } = await params;
   const patient = await getPatient(userId);
+
+  Sentry.metrics.count("user_view_new-appointment", patient.name);
 
   return (
     <div className='flex h-screen max-h-screen'>

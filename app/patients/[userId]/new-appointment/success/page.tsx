@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
+import * as Sentry from "@sentry/nextjs";
 import { doctors } from "@/lib/constants";
 import { cn, formatDateTime } from "@/lib/utils";
+import { getUser } from "@/actions/patient.actions";
 import { buttonVariants } from "@/components/ui/button";
 import { getAppointment } from "@/actions/appointment.actions";
 
@@ -14,8 +16,11 @@ export default async function Success({ params, searchParams }: Props) {
   const { userId } = await params;
   const appointmentId = (await searchParams).appointmentId as string;
 
+  const user = await getUser(userId);
   const appointment = await getAppointment(appointmentId);
   const doctor = doctors.find((d) => d.name === appointment?.primaryPhysician);
+
+  Sentry.metrics.count("user_view_appointment-success", user.name);
 
   return (
     <div className='flex h-screen max-h-screen px-[5%]'>
