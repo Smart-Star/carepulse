@@ -100,3 +100,12 @@ export const getAppointmentButtonLabel = (type: string): string => {
       return "Submit";
   }
 };
+
+export const getAuthButtonLabel = (type: string): string => {
+  switch (type) {
+    case "login":
+      return "Login";
+    default:
+      return "Get Started";
+  }
+};

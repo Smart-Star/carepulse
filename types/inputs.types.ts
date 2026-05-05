@@ -8,7 +8,7 @@ export type SearchParamProps = {
 };
 
 export interface CreateUserParams {
-  name: string;
+  name?: string;
   email: string;
   phone: string;
 }

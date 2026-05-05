@@ -1,5 +1,6 @@
 import {
-  userFormSchema,
+  registerUserFormSchema,
+  loginUserFormSchema,
   PatientFormSchema,
   createAppointmentFormSchema,
 } from "@/lib/schema/validation";
@@ -9,8 +10,8 @@ import { AdminStat, FormControlType, FormFieldType } from "../types/ui.types";
 
 export const genderOptions = ["Male", "Female", "Other"];
 
-export const patientFormControls: FormControlType<
-  z.infer<typeof userFormSchema>
+export const registerPatientFormControls: FormControlType<
+  z.infer<typeof registerUserFormSchema>
 >[] = [
   {
     name: "name",
@@ -20,6 +21,25 @@ export const patientFormControls: FormControlType<
     iconSrc: "/assets/icons/user.svg",
     iconAlt: "user",
   },
+  {
+    name: "email",
+    label: "Email address",
+    fieldType: FormFieldType.INPUT,
+    placeholder: "john@doe.com",
+    iconSrc: "/assets/icons/email.svg",
+    iconAlt: "email",
+  },
+  {
+    name: "phone",
+    label: "Phone number",
+    fieldType: FormFieldType.PHONE_INPUT,
+    placeholder: "+1 (555) 123-4567",
+  },
+];
+
+export const loginPatientFormControls: FormControlType<
+  z.infer<typeof loginUserFormSchema>
+>[] = [
   {
     name: "email",
     label: "Email address",

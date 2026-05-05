@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const userFormSchema = z.object({
+export const registerUserFormSchema = z.object({
   name: z
     .string()
     .min(2, "Name must be at least 3 characters")
@@ -10,6 +10,23 @@ export const userFormSchema = z.object({
     .string()
     .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
 });
+
+export const loginUserFormSchema = z.object({
+  name: z.string().optional(),
+  email: z.email(),
+  phone: z
+    .string()
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+});
+
+export function getUserFormSchema(type: string) {
+  switch (type) {
+    case "login":
+      return loginUserFormSchema;
+    default:
+      return registerUserFormSchema;
+  }
+}
 
 export const PatientFormSchema = z.object({
   name: z
@@ -21,7 +38,6 @@ export const PatientFormSchema = z.object({
     .string()
     .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
   birthDate: z.date(),
-  // birthDate: z.coerce.date(),
   gender: z.enum(["Male", "Female", "Other"]),
   address: z
     .string()
@@ -56,7 +72,6 @@ export const PatientFormSchema = z.object({
   pastMedicalHistory: z.string().optional(),
   identificationType: z.string().optional(),
   identificationNumber: z.string().optional(),
-  // identificationDocument: z.custom<File[]>().optional(),
   identificationDocument: z.array(z.instanceof(File)).optional(),
   treatmentConsent: z.boolean().refine((value) => value === true, {
     message: "You must consent to treatment in order to proceed",

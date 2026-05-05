@@ -16,7 +16,7 @@ import { parseStringify } from "@/lib/utils";
 import { InputFile } from "node-appwrite/file";
 import { CreateUserParams, RegisterUserParams } from "@/types/inputs.types";
 
-export const CreateUser = async (user: CreateUserParams) => {
+export const createUser = async (user: CreateUserParams) => {
   try {
     const newUser = await users.create({
       userId: ID.unique(),
@@ -50,6 +50,31 @@ export const CreateUser = async (user: CreateUserParams) => {
         message: "Something went wrong while creating the account.",
       };
     }
+  }
+};
+
+export const loginUser = async (user: CreateUserParams) => {
+  try {
+    const getExistingusers = await users.list({
+      queries: [
+        Query.equal("email", [user.email]),
+        Query.equal("phone", [user.phone]),
+      ],
+    });
+    if (getExistingusers?.total > 0) {
+      return {
+        success: true,
+        data: parseStringify(getExistingusers.users[0]),
+        message: `Login successfully ${getExistingusers.users[0].name}.`,
+      };
+    }
+  } catch (error) {
+    console.log(`Error fetching user. ${error}`);
+
+    return {
+      success: false,
+      message: "Something went wrong! Unable to get user.",
+    };
   }
 };
 
