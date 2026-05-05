@@ -104,7 +104,6 @@ export const getRecentAppointmentList = async () => {
       }
     }
 
-    revalidatePath("/admin");
     return parseStringify({
       scheduledCount,
       pendingCount,
