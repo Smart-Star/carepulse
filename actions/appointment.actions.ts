@@ -15,8 +15,8 @@ import {
 
 import { ID, Query } from "node-appwrite";
 import { revalidatePath } from "next/cache";
-import { formatDateTime, parseStringify } from "@/lib/utils";
 import { Appointment } from "@/types/models.types";
+import { formatDateTime, parseStringify } from "@/lib/utils";
 
 export const createAppointment = async (
   appointmentData: CreateAppointmentParams,
@@ -32,6 +32,8 @@ export const createAppointment = async (
     });
 
     if (newAppointment) {
+      revalidatePath("/admin");
+
       return {
         success: true,
         data: parseStringify(newAppointment),
@@ -102,6 +104,7 @@ export const getRecentAppointmentList = async () => {
       }
     }
 
+    revalidatePath("/admin");
     return parseStringify({
       scheduledCount,
       pendingCount,
